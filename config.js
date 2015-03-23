@@ -1,3 +1,0 @@
-module.exports = {
-    GOOGLE_TRANSLATE_API_KEY: 'AIzaSyDWKHDMOAtt6BBzBsPgQ5hEWYbatQVN3DU'
-}
