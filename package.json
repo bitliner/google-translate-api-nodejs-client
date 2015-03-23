@@ -2,14 +2,18 @@
   "name": "google-translate-api-nodejs-client",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "google-translate-api-nodejs-client.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "cd test && mocha -t 5000 ./"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "html-entities": "^1.1.2",
     "logb": "0.0.2",
     "request": "^2.53.0"
+  },
+  "devDependencies": {
+    "chai": "^2.1.2"
   }
 }
