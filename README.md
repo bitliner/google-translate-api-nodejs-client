@@ -11,8 +11,8 @@ translate({
   q:'...text is here...'
 }, function(err,translation){
   
-  // translation is a string representig the translation
-  // original response would be in html, this client converts the html to the proper text string	
+  // translation is a string representing the output translation
+  // original response would be in html, this client converts the html to a proper text string	
 
 });
 ```
