@@ -1,8 +1,7 @@
-var config = require('./config'),
-    request = require('request'),
+var request = require('request'),
     Logger = require('logb').getLogger(module.filename);
 
-var API_KEY = config.GOOGLE_TRANSLATE_API_KEY,
+var API_KEY = process.env.API_KEY,
     URL = 'https://www.googleapis.com/language/translate/v2/languages?key=' + API_KEY;
 
 request(URL, function(err, httpResponse, body) {
