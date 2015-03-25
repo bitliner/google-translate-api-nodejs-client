@@ -1,17 +1,31 @@
 var request = require('request'),
     Logger = require('logb').getLogger(module.filename),
     Entities = require('html-entities').AllHtmlEntities,
-    entities = new Entities();
+    entities = new Entities(),
+    RateLimiter = require('limiter').RateLimiter;
 
 
 
 
 
 var GoogleTranslateApi = module.exports = function GoogleTranslateApi(options) {
+    // credentials
     this.API_KEY = options.API_KEY;
     this.URL = 'https://www.googleapis.com/language/translate/v2';
+    // throttling
+    this.limiter = new RateLimiter(100, 'second');
+
+
+    Logger.info('Using API_KEY', this.API_KEY);
+};
+GoogleTranslateApi.prototype.translate = function(opts, cb) {
+    var self = this;
+
+    self.limiter.removeTokens(1, function() {
+        self._translate(opts, cb);
+    });
 }
-GoogleTranslateApi.prototype.translate = function translate(opts, cb) {
+GoogleTranslateApi.prototype._translate = function translate(opts, cb) {
     var self = this;
 
 
@@ -36,6 +50,11 @@ GoogleTranslateApi.prototype.translate = function translate(opts, cb) {
         }
 
         body = JSON.parse(body);
+
+        if (!body.data || !body.data.translations) {
+            Logger.warn('response from Google Translate API returned weird body', body);
+            return cb(new Error('Weird response from Google Translate API'));
+        }
 
         translation = body.data.translations[0].translatedText;
         translation = entities.decode(translation);
