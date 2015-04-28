@@ -13,7 +13,7 @@ var GoogleTranslateApi = module.exports = function GoogleTranslateApi(options) {
     this.API_KEY = options.API_KEY;
     this.URL = 'https://www.googleapis.com/language/translate/v2';
     // throttling
-    this.limiter = new RateLimiter(100, 'second');
+    this.limiter = new RateLimiter(1, 'second');
 
 
     Logger.info('Using API_KEY', this.API_KEY);
@@ -66,12 +66,24 @@ GoogleTranslateApi.prototype._translate = function translate(opts, cb) {
 
 
 
-GoogleTranslateApi.prototype.fromGermanToEnglish = function fromGermanToEnglish(text, cb) {
+GoogleTranslateApi.prototype.fromGermanToEnglish = function(text, cb) {
 
     Logger.info('Translating from German to English...');
 
     this.translate({
         source: 'de',
+        target: 'en',
+        text: text
+    }, cb);
+
+    return;
+}
+GoogleTranslateApi.prototype.fromSimplifiedChineseToEnglish = function(text, cb) {
+
+    Logger.info('Translating from German to English...');
+
+    this.translate({
+        source: 'zh-CN',
         target: 'en',
         text: text
     }, cb);
