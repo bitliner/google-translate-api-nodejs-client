@@ -82,7 +82,7 @@ GoogleTranslateApi.prototype.fromGermanToEnglish = function(text, cb) {
 };
 GoogleTranslateApi.prototype.fromDutchToEnglish = function(text, cb) {
 
-	Logger.info('Translating from German to English...');
+	Logger.info('Translating from Dutch to English...');
 
 	this.translate({
 		source: 'nl',
