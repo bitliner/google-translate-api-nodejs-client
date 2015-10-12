@@ -106,7 +106,7 @@ GoogleTranslateApi.prototype.fromSimplifiedChineseToEnglish = function(text, cb)
 };
 GoogleTranslateApi.prototype.fromFrenchToEnglish = function(text, cb) {
 
-	Logger.info('Translating from German to English...');
+	Logger.info('Translating from French to English...');
 
 	this.translate({
 		source: 'fr',
