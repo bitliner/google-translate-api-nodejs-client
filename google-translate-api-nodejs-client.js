@@ -104,3 +104,15 @@ GoogleTranslateApi.prototype.fromSimplifiedChineseToEnglish = function(text, cb)
 
 	return;
 };
+GoogleTranslateApi.prototype.fromFrenchToEnglish = function(text, cb) {
+
+	Logger.info('Translating from German to English...');
+
+	this.translate({
+		source: 'fr',
+		target: 'en',
+		text: text
+	}, cb);
+
+	return;
+};
