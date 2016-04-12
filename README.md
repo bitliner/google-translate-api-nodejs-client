@@ -14,7 +14,7 @@ new GoogleTranslateApi({
   .translate({
     source:'en',
     target:'ge',
-    q:'...text is here...'
+    text:'...text is here...'
   }, function(err,translation){
   
     // translation is a string representing the output translation
