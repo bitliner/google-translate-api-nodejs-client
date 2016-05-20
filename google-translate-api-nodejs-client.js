@@ -116,3 +116,27 @@ GoogleTranslateApi.prototype.fromFrenchToEnglish = function(text, cb) {
 
 	return;
 };
+GoogleTranslateApi.prototype.fromSpanishToEnglish = function(text, cb) {
+
+	Logger.info('Translating from Spanish to English...');
+
+	this.translate({
+		source: 'es',
+		target: 'en',
+		text: text
+	}, cb);
+
+	return;
+};
+GoogleTranslateApi.prototype.fromItalianToEnglish = function(text, cb) {
+
+	Logger.info('Translating from Italian to English...');
+
+	this.translate({
+		source: 'it',
+		target: 'en',
+		text: text
+	}, cb);
+
+	return;
+};
