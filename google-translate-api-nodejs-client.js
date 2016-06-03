@@ -196,10 +196,16 @@
  	var self = this;
 
 
+
  	self._detect(opts, function(err, body) {
 
  		if (err){
  			return cb(err);
+ 		}
+
+ 		if (!body||!body.data){
+ 			Logger.error('No language detected by Google. Text was', '"'+opts.text+'"');
+ 			return cb(new Error('No langauge detetd by Google'));
  		}
  		detection = body.data.detections[0].sort(function(el1, el2) {
  			return el2.confidence - el1.confidence;
@@ -209,7 +215,7 @@
  		confidence = detection.confidence;
 
  		if (confidence < 0.9) {
- 			Logger.warn('Confidence less than 90%', detectedLanguage, text);
+ 			Logger.debug('Confidence less than 90%', detectedLanguage, 'Text is',opts.text, 'and Google\'s answer is', JSON.stringify(body,null,4));
  		}
 
 
