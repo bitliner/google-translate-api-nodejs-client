@@ -1,227 +1,277 @@
- /* jshint node:true */
- 'use strict';
+/* jshint node:true */
+'use strict';
 
 
- var request = require('request'),
- 	Logger = require('logb').getLogger(module.filename),
- 	Entities = require('html-entities').AllHtmlEntities,
- 	entities = new Entities(),
- 	RateLimiter = require('limiter').RateLimiter;
+var request = require('request'),
+	Logger = require('logb').getLogger(module.filename),
+	Entities = require('html-entities').AllHtmlEntities,
+	entities = new Entities(),
+	RateLimiter = require('limiter').RateLimiter;
 
 
 
- var GoogleTranslateApi = module.exports = function GoogleTranslateApi(options) {
- 	// credentials
- 	this.API_KEY = options.API_KEY;
- 	this.URL = 'https://www.googleapis.com/language/translate/v2';
- 	// throttling
- 	this.limiter = new RateLimiter(1, 'second');
+var GoogleTranslateApi = module.exports = function GoogleTranslateApi(options) {
+	// credentials
+	this.API_KEY = options.API_KEY;
+	this.URL = 'https://www.googleapis.com/language/translate/v2';
+	// throttling
+	this.limiter = new RateLimiter(1, 'second');
 
 
- 	Logger.info('Using API_KEY', this.API_KEY);
- };
- GoogleTranslateApi.prototype.translate = function(opts, cb) {
- 	var self = this;
+	Logger.info('Using API_KEY', this.API_KEY);
+};
+GoogleTranslateApi.prototype.translate = function(opts, cb) {
+	var self = this;
 
- 	self.limiter.removeTokens(1, function() {
- 		self._translate(opts, cb);
- 	});
- };
- GoogleTranslateApi.prototype._translate = function translate(opts, cb) {
- 	var self = this;
+	self.limiter.removeTokens(1, function() {
+		self._translate(opts, cb);
+	});
+};
 
+GoogleTranslateApi.prototype._translate = function translate(opts, cb) {
+	var self = this;
 
- 	request.post({
- 		url: self.URL,
- 		headers: {
- 			'X-HTTP-Method-Override': 'GET'
- 		},
- 		form: {
- 			key: self.API_KEY,
- 			q: opts.text,
- 			source: opts.source,
- 			target: opts.target
- 		}
- 	}, function(err, response, body) {
 
- 		var translation;
+	request.post({
+		url: self.URL,
+		headers: {
+			'X-HTTP-Method-Override': 'GET'
+		},
+		form: {
+			key: self.API_KEY,
+			q: opts.text,
+			source: opts.source,
+			target: opts.target
+		}
+	}, function(err, response, body) {
 
- 		if (err) {
- 			cb(err);
- 			return;
- 		}
+		var translation;
 
- 		body = JSON.parse(body);
+		if (err) {
+			cb(err);
+			return;
+		}
 
- 		if (!body.data || !body.data.translations) {
- 			Logger.warn('response from Google Translate API returned weird body', body);
- 			return cb(new Error('Weird response from Google Translate API'));
- 		}
+		body = JSON.parse(body);
 
- 		translation = body.data.translations[0].translatedText;
- 		translation = entities.decode(translation);
+		if (!body.data || !body.data.translations) {
+			Logger.warn('response from Google Translate API returned weird body', body);
+			return cb(new Error('Weird response from Google Translate API'));
+		}
 
- 		return cb(null, translation);
+		translation = body.data.translations[0].translatedText;
+		translation = entities.decode(translation);
 
- 	});
- };
+		return cb(null, translation);
 
+	});
+};
 
 
- GoogleTranslateApi.prototype.fromGermanToEnglish = function(text, cb) {
 
- 	Logger.info('Translating from German to English...');
+GoogleTranslateApi.prototype.fromGermanToEnglish = function(text, cb) {
 
- 	this.translate({
- 		source: 'de',
- 		target: 'en',
- 		text: text
- 	}, cb);
+	Logger.info('Translating from German to English...');
 
- 	return;
- };
- GoogleTranslateApi.prototype.fromDutchToEnglish = function(text, cb) {
+	this.translate({
+		source: 'de',
+		target: 'en',
+		text: text
+	}, cb);
 
- 	Logger.info('Translating from Dutch to English...');
+	return;
+};
+GoogleTranslateApi.prototype.fromDutchToEnglish = function(text, cb) {
 
- 	this.translate({
- 		source: 'nl',
- 		target: 'en',
- 		text: text
- 	}, cb);
+	Logger.info('Translating from Dutch to English...');
 
- 	return;
- };
- GoogleTranslateApi.prototype.fromSimplifiedChineseToEnglish = function(text, cb) {
+	this.translate({
+		source: 'nl',
+		target: 'en',
+		text: text
+	}, cb);
 
- 	Logger.info('Translating from German to English...');
+	return;
+};
+GoogleTranslateApi.prototype.fromSimplifiedChineseToEnglish = function(text, cb) {
 
- 	this.translate({
- 		source: 'zh-CN',
- 		target: 'en',
- 		text: text
- 	}, cb);
+	Logger.info('Translating from German to English...');
 
- 	return;
- };
- GoogleTranslateApi.prototype.fromFrenchToEnglish = function(text, cb) {
+	this.translate({
+		source: 'zh-CN',
+		target: 'en',
+		text: text
+	}, cb);
 
- 	Logger.info('Translating from French to English...');
+	return;
+};
+GoogleTranslateApi.prototype.fromFrenchToEnglish = function(text, cb) {
 
- 	this.translate({
- 		source: 'fr',
- 		target: 'en',
- 		text: text
- 	}, cb);
+	Logger.info('Translating from French to English...');
 
- 	return;
- };
- GoogleTranslateApi.prototype.fromSpanishToEnglish = function(text, cb) {
+	this.translate({
+		source: 'fr',
+		target: 'en',
+		text: text
+	}, cb);
 
- 	Logger.info('Translating from Spanish to English...');
+	return;
+};
+GoogleTranslateApi.prototype.fromSpanishToEnglish = function(text, cb) {
 
- 	this.translate({
- 		source: 'es',
- 		target: 'en',
- 		text: text
- 	}, cb);
+	Logger.info('Translating from Spanish to English...');
 
- 	return;
- };
- GoogleTranslateApi.prototype.fromItalianToEnglish = function(text, cb) {
+	this.translate({
+		source: 'es',
+		target: 'en',
+		text: text
+	}, cb);
 
- 	Logger.info('Translating from Italian to English...');
+	return;
+};
+GoogleTranslateApi.prototype.fromItalianToEnglish = function(text, cb) {
 
- 	this.translate({
- 		source: 'it',
- 		target: 'en',
- 		text: text
- 	}, cb);
+	Logger.info('Translating from Italian to English...');
 
- 	return;
- };
+	this.translate({
+		source: 'it',
+		target: 'en',
+		text: text
+	}, cb);
 
- GoogleTranslateApi.prototype._detect = function(opts, cb) {
- 	var text;
- 	var detectedLanguage;
+	return;
+};
+GoogleTranslateApi.prototype.fromRussianToEnglish = function(text, cb) {
 
- 	var self = this;
+	Logger.info('Translating from Italian to English...');
 
- 	text = opts.text || null;
+	this.translate({
+		source: 'ru',
+		target: 'en',
+		text: text
+	}, cb);
 
+	return;
+};
+GoogleTranslateApi.prototype.fromSpanishElSalvadorToEnglish = function(text, cb) {
 
- 	if (!text) {
- 		return cb(null);
- 	}
+	Logger.info('Translating from Italian to English...');
 
+	this.translate({
+		source: 'sv',
+		target: 'en',
+		text: text
+	}, cb);
 
- 	request.post({
- 		url: self.URL+'/detect',
- 		headers: {
- 			'X-HTTP-Method-Override': 'GET'
- 		},
- 		form: {
- 			key: self.API_KEY,
- 			q: text
- 		}
- 	}, function(err, response, body) {
+	return;
+};
+GoogleTranslateApi.prototype.fromDanishToEnglish = function(text, cb) {
 
+	Logger.info('Translating from Italian to English...');
 
- 		if (err) {
- 			return cb(err);
- 		}
+	this.translate({
+		source: 'da',
+		target: 'en',
+		text: text
+	}, cb);
 
- 		body = JSON.parse(body);
+	return;
+};
 
- 		if (!body.data || !body.data.detections || !body.data.detections.length) {
- 			Logger.warn('response from Google Translate API returned weird body', body);
- 			return cb(new Error('Weird response from Google Translate API'));
- 		}
+GoogleTranslateApi.prototype.fromJapaneseToEnglish = function(text, cb) {
 
- 		cb(null, body);
+	Logger.info('Translating from Italian to English...');
 
+	this.translate({
+		source: 'ja',
+		target: 'en',
+		text: text
+	}, cb);
 
+	return;
+};
 
- 	});
- };
 
+GoogleTranslateApi.prototype._detect = function(opts, cb) {
+	var text;
 
+	var self = this;
 
- GoogleTranslateApi.prototype.detect = function(opts, cb) {
+	text = opts.text || null;
 
- 	var detection;
- 	var confidence;
- 	var detectedLanguage;
 
- 	var self = this;
+	if (!text) {
+		return cb(null);
+	}
 
 
+	request.post({
+		url: self.URL + '/detect',
+		headers: {
+			'X-HTTP-Method-Override': 'GET'
+		},
+		form: {
+			key: self.API_KEY,
+			q: text
+		}
+	}, function(err, response, body) {
 
- 	self._detect(opts, function(err, body) {
 
- 		if (err){
- 			return cb(err);
- 		}
+		if (err) {
+			return cb(err);
+		}
 
- 		if (!body||!body.data){
- 			Logger.error('No language detected by Google. Text was', '"'+opts.text+'"');
- 			return cb(new Error('No langauge detetd by Google'));
- 		}
- 		detection = body.data.detections[0].sort(function(el1, el2) {
- 			return el2.confidence - el1.confidence;
- 		})[0];
+		body = JSON.parse(body);
 
- 		detectedLanguage = detection.language;
- 		confidence = detection.confidence;
+		if (!body.data || !body.data.detections || !body.data.detections.length) {
+			Logger.warn('response from Google Translate API returned weird body', body);
+			return cb(new Error('Weird response from Google Translate API'));
+		}
 
- 		if (confidence < 0.9) {
- 			Logger.debug('Confidence less than 90%', detectedLanguage, 'Text is',opts.text, 'and Google\'s answer is', JSON.stringify(body,null,4));
- 		}
+		cb(null, body);
 
 
 
- 		return cb(null, detectedLanguage);
+	});
+};
 
 
- 	});
- };
+
+GoogleTranslateApi.prototype.detect = function(opts, cb) {
+
+	var detection;
+	var confidence;
+	var detectedLanguage;
+
+	var self = this;
+
+
+
+	self._detect(opts, function(err, body) {
+
+		if (err) {
+			return cb(err);
+		}
+
+		if (!body || !body.data) {
+			Logger.error('No language detected by Google. Text was', '"' + opts.text + '"');
+			return cb(new Error('No langauge detetd by Google'));
+		}
+		detection = body.data.detections[0].sort(function(el1, el2) {
+			return el2.confidence - el1.confidence;
+		})[0];
+
+		detectedLanguage = detection.language;
+		confidence = detection.confidence;
+
+		if (confidence < 0.9) {
+			Logger.debug('Confidence less than 90%', detectedLanguage, 'Text is', opts.text, 'and Google\'s answer is', JSON.stringify(body, null, 4));
+		}
+
+
+
+		return cb(null, detectedLanguage);
+
+
+	});
+};
