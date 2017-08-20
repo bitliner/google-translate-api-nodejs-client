@@ -29,3 +29,9 @@ new GoogleTranslateApi({
 cd google-translate-api-nodejs-client
 GOOGLE_TRANSLATE_API_KEY=... node availableLanguages.js
 ```
+
+## TODO
+
+- support async/await style
+- validate input languages (according to [List of supported languages](https://cloud.google.com/translate/docs/languages)) - extractable from API
+- add language detection in case 'from' language is not specified
