@@ -27,43 +27,80 @@ GoogleTranslateApi.prototype.translate = function(opts, cb) {
     self._translate(opts, cb);
   });
 };
+GoogleTranslateApi.prototype.getAvailableLanguages = function(cb) {
+  // return new Promise((resolve, reject) => {
 
-GoogleTranslateApi.prototype._translate = function translate(opts, cb) {
-  var self = this;
+  if (this.availableLanguages) {
+    return cb(null, this.availableLanguages);
+  }
+  const URL = 'https://www.googleapis.com/language/translate/v2/languages?key=' + this.API_KEY;
 
-
-  request.post({
-    url: self.URL,
-    headers: {
-      'X-HTTP-Method-Override': 'GET'
-    },
-    form: {
-      key: self.API_KEY,
-      q: opts.text,
-      source: opts.source,
-      target: opts.target
-    }
-  }, function(err, response, body) {
-
-    var translation;
-
+  request(URL, function(err, httpResponse, body) {
     if (err) {
-      cb(err);
-      return;
+      return cb(err);
+    }
+    if (httpResponse.statusCode !== 200) {
+      return cb(new Error('Status Code of the response is ' + httpResponse.statusCode));
     }
 
+    // console.log('Avaiable languages are:');
     body = JSON.parse(body);
+    const languages = body.data.languages.map(function(e) {
+      return e.language
+    });
+    cb(null, languages);
+  });
+// });
+};
 
-    if (!body.data || !body.data.translations) {
-      Logger.warn('response from Google Translate API returned weird body', body);
-      return cb(new Error('Weird response from Google Translate API'));
+GoogleTranslateApi.prototype._translate = async function translate(opts, cb) {
+  const self = this;
+
+  const sourceLanguage = opts.source;
+  const targetLanguage = opts.target;
+
+  this.getAvailableLanguages((err, availableLanguages) => {
+    if (availableLanguages.indexOf(sourceLanguage) < 0) {
+      throw new Error('Google Translation does not support ' + sourceLanguage + ' as source language');
     }
 
-    translation = body.data.translations[0].translatedText;
-    translation = entities.decode(translation);
+    if (availableLanguages.indexOf(targetLanguage) < 0) {
+      throw new Error('Google Translation does not support ' + targetLanguage + ' as target language');
+    }
 
-    return cb(null, translation);
 
+    request.post({
+      url: self.URL,
+      headers: {
+        'X-HTTP-Method-Override': 'GET'
+      },
+      form: {
+        key: self.API_KEY,
+        q: opts.text,
+        source: sourceLanguage,
+        target: targetLanguage,
+      }
+    }, function(err, response, body) {
+
+      var translation;
+
+      if (err) {
+        cb(err);
+        return;
+      }
+
+      body = JSON.parse(body);
+
+      if (!body.data || !body.data.translations) {
+        Logger.warn('response from Google Translate API returned weird body', body);
+        return cb(new Error('Weird response from Google Translate API'));
+      }
+
+      translation = body.data.translations[0].translatedText;
+      translation = entities.decode(translation);
+
+      return cb(null, translation);
+    });
   });
 };
 
