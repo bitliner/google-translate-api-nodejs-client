@@ -1,5 +1,4 @@
-/* jshint node:true */
-'use strict';
+const availableLanguages = require('./availableLanguages');
 
 
 var request = require('request'),
@@ -16,6 +15,7 @@ var GoogleTranslateApi = module.exports = function GoogleTranslateApi(options) {
   this.URL = 'https://www.googleapis.com/language/translate/v2';
   // throttling
   this.limiter = new RateLimiter(1, 'second');
+  this.availableLanguages = availableLanguages;
 
 
   Logger.info('Using API_KEY', this.API_KEY);
@@ -29,28 +29,8 @@ GoogleTranslateApi.prototype.translate = function(opts, cb) {
 };
 GoogleTranslateApi.prototype.getAvailableLanguages = function(cb) {
   // return new Promise((resolve, reject) => {
+  return this.availableLanguages;
 
-  if (this.availableLanguages) {
-    return cb(null, this.availableLanguages);
-  }
-  const URL = 'https://www.googleapis.com/language/translate/v2/languages?key=' + this.API_KEY;
-
-  request(URL, (err, httpResponse, body) => {
-    if (err) {
-      return cb(err);
-    }
-    if (httpResponse.statusCode !== 200) {
-      return cb(new Error('Status Code of the response is ' + httpResponse.statusCode));
-    }
-
-    // console.log('Avaiable languages are:');
-    body = JSON.parse(body);
-    const languages = body.data.languages.map(function(e) {
-      return e.language
-    });
-    this.availableLanguages = languages;
-    cb(null, languages);
-  });
 // });
 };
 
