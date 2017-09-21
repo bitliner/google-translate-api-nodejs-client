@@ -35,7 +35,7 @@ GoogleTranslateApi.prototype.getAvailableLanguages = function(cb) {
   }
   const URL = 'https://www.googleapis.com/language/translate/v2/languages?key=' + this.API_KEY;
 
-  request(URL, function(err, httpResponse, body) {
+  request(URL, (err, httpResponse, body) => {
     if (err) {
       return cb(err);
     }
@@ -48,6 +48,7 @@ GoogleTranslateApi.prototype.getAvailableLanguages = function(cb) {
     const languages = body.data.languages.map(function(e) {
       return e.language
     });
+    this.availableLanguages = languages;
     cb(null, languages);
   });
 // });
