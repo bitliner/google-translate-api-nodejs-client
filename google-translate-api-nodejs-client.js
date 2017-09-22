@@ -15,7 +15,7 @@ var GoogleTranslateApi = module.exports = function GoogleTranslateApi(options) {
   this.API_KEY = options.API_KEY;
   this.URL = 'https://www.googleapis.com/language/translate/v2';
   // throttling
-  this.limiter = new RateLimiter(1, 'second');
+  this.limiter = new RateLimiter(1000, 'second');
   this.availableLanguages = availableLanguages;
 
 
