@@ -9,6 +9,7 @@ var request = require('request'),
 
 
 
+
 var GoogleTranslateApi = module.exports = function GoogleTranslateApi(options) {
   // credentials
   this.API_KEY = options.API_KEY;
@@ -29,7 +30,7 @@ GoogleTranslateApi.prototype.translate = function(opts, cb) {
 };
 GoogleTranslateApi.prototype.getAvailableLanguages = function(cb) {
   // return new Promise((resolve, reject) => {
-  return this.availableLanguages;
+  return cb(null, this.availableLanguages);
 
 // });
 };
