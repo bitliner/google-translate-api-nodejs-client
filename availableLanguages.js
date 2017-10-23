@@ -102,4 +102,5 @@ module.exports = [
   'yo',
   'zh',
   'zh-TW',
+  'zh-CN',
   'zu',]
