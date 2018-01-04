@@ -50,18 +50,24 @@ GoogleTranslateApi.prototype._translate = async function translate(opts, cb) {
       throw new Error('Google Translation does not support ' + targetLanguage + ' as target language');
     }
 
+    const form = {
+      key: self.API_KEY,
+      q: opts.text,
+      source: sourceLanguage,
+      target: targetLanguage,
+    };
+
+    if (opts.format) {
+      form.format = opts.format;
+    }
+
 
     request.post({
       url: self.URL,
       headers: {
         'X-HTTP-Method-Override': 'GET'
       },
-      form: {
-        key: self.API_KEY,
-        q: opts.text,
-        source: sourceLanguage,
-        target: targetLanguage,
-      }
+      form,
     }, function(err, response, body) {
 
       var translation;
